@@ -1,0 +1,56 @@
+# Importer les bibliothèques nécessaires
+import random
+from qiskit import QuantumCircuit, Aer, execute
+
+# Fonction pour créer un circuit quantique
+def create_quantum_circuit():
+    # Créer un circuit avec 1 qubit et 1 bit classique
+    qc = QuantumCircuit(1, 1)
+    
+    # Appliquer une porte Hadamard (superposition)
+    qc.h(0)
+    
+    # Mesurer le qubit
+    qc.measure(0, 0)
+    
+    return qc
+
+# Fonction pour exécuter le circuit et obtenir une prédiction
+def run_quantum_simulation():
+    # Créer le circuit quantique
+    qc = create_quantum_circuit()
+    
+    # Utiliser le simulateur "qasm" local
+    simulator = Aer.get_backend('qasm_simulator')
+    
+    # Exécuter le circuit sur le simulateur avec 1024 répétitions
+    job = execute(qc, simulator, shots=1024)
+    result = job.result()
+    
+    # Obtenir les résultats des mesures
+    counts = result.get_counts(qc)
+    return counts
+
+# Fonction pour prendre une décision basée sur les résultats
+def make_decision(counts):
+    # Vérifier les occurrences des états "0" et "1"
+    zero_count = counts.get('0', 0)
+    one_count = counts.get('1', 0)
+    
+    # Décision basée sur la probabilité
+    if zero_count > one_count:
+        return "Acheter"
+    else:
+        return "Vendre"
+
+# Fonction principale
+if __name__ == "__main__":
+    print("Exécution du robot quantique...")
+    
+    # Étape 1 : Simuler le circuit quantique
+    counts = run_quantum_simulation()
+    print(f"Résultats de la simulation : {counts}")
+    
+    # Étape 2 : Prendre une décision basée sur les résultats
+    decision = make_decision(counts)
+    print(f"Décision du robot : {decision}")
